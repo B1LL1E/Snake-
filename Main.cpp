@@ -88,6 +88,27 @@ void Input(){
     }    
 }
 
+//oblsuga ruchu glowy weza
+void Logic(){
+    switch (dir)
+    {
+    case LEFT:
+        x--;
+        break;
+    case DOWN:
+        y++;
+        break;
+    case RIGHT:
+        x++;
+        break;
+    case UP:
+        y--;
+        break;
+    default:
+        break;
+    }
+}
+
 int main(){
 
     Setup();
