@@ -1,5 +1,6 @@
-#include <iostream>
-#include <cstdlib>
+#include <iostream>//  io stream
+#include <cstdlib> //  c std lib
+#include <conio.h> //  con io
 
 using namespace std;
 
@@ -10,6 +11,16 @@ const int heightP = 10; //wysokosc planszy
 const int widthP = 10; // szerokosc planszy
 
 bool gameOver = true; // informacja o przegranej w grze czy to prawda czy falsz 
+
+//zawartosc biblioteki conio.h
+enum eDirection { // napisanie wlasnych zmiennych do sterowania za pomoca enum
+    STOP = 0,
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN
+};
+eDirection dir; // zmienna trzymajac konkretny kiernek, poniewaz waz sie nigdy nie zatrzymuje
 
 void Setup(){
     gameOver = false;
@@ -52,6 +63,29 @@ void Draw(){
     for(size_t i = 0; i < widthP + 2; ++i){
         cout << "#";
     }
+}
+
+//funckja wyczytuje klawisze wsad z klawiatury
+void Input(){
+    if(_kbhit()){ // _kb hit() (keyboard) funkcja sprawdza czy jakikolwiek klawisz jest wcisniety [TRUE/FALSE]
+        switch (_getch())    // _get ch() funckja ktora odczytuje pojedynczy znak z konsoli
+        {
+        case 'a':
+            dir = LEFT;
+            break;
+        case 's':
+            dir = DOWN;
+            break;
+        case 'd':
+            dir = RIGHT;
+            break;
+        case 'w':
+            dir = UP;
+            break;
+        default:
+            break;
+        }
+    }    
 }
 
 int main(){
