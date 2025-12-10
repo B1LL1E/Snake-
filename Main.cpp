@@ -1,6 +1,7 @@
 #include <iostream>//  io stream
 #include <cstdlib> //  c std lib
 #include <conio.h> //  con io
+#include <windows.h>
 
 using namespace std;
 
@@ -36,6 +37,9 @@ void Setup(){
 
 //rysowanie w konsoli
 void Draw(){
+    //czyszczenie konsoli
+    system("cls");
+
     //rysowanie gornej scianki, dodalem 2 dlatego ze 10 to jest srodek planszy, bez scian
     for(size_t i = 0; i < widthP + 2; ++i){
         cout << "#";
@@ -63,6 +67,7 @@ void Draw(){
     for(size_t i = 0; i < widthP + 2; ++i){
         cout << "#";
     }
+    
 }
 
 //funckja wyczytuje klawisze wsad z klawiatury
@@ -107,6 +112,18 @@ void Logic(){
     default:
         break;
     }
+
+    //sprawdzanie czy glowa weza wyszlo poza sciane
+    if(x < 0 || x >= widthP || y < 0 || y >= heightP){
+        gameOver = true;
+    }
+
+    //sprawdzenie ze glowa weza jest na rowno z jedzniem
+    if(x == fruitX && y == fruitY){
+        score += 1;
+        fruitX = rand() % widthP;
+        fruitY = rand() % heightP;
+    }
 }
 
 int main(){
@@ -114,7 +131,9 @@ int main(){
     Setup();
     while(!gameOver){
         Draw();
+        Input();
+        Logic();
+        Sleep(200); // ustawie czestotliowsc odsierzanai gry na 0,1 s czyli jakos 10fps 
     }
     return 0;
-
 }
