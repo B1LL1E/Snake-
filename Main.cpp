@@ -2,6 +2,7 @@
 #include <cstdlib> //  c std lib
 #include <conio.h> //  con io
 #include <windows.h>
+#include <winuser.h>
 
 using namespace std;
 
@@ -10,6 +11,10 @@ int fruitX, fruitY; // pozycja owocu
 int score; // wynik
 const int heightP = 10; //wysokosc planszy
 const int widthP = 10; // szerokosc planszy
+
+//dlugosc weza, 0 to oznacze ze nic nie zjadl
+int tailX[widthP], tailY[heightP];
+int tailSize = 0; 
 
 bool gameOver = true; // informacja o przegranej w grze czy to prawda czy falsz 
 
@@ -35,10 +40,19 @@ void Setup(){
 
 }
 
+//jakas nowa funkcja
+void SetCursor(int x, int y) {
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
 //rysowanie w konsoli
 void Draw(){
     //czyszczenie konsoli
-    system("cls");
+    //system("cls");
+    SetCursor(0, 0);
 
     //rysowanie gornej scianki, dodalem 2 dlatego ze 10 to jest srodek planszy, bez scian
     for(size_t i = 0; i < widthP + 2; ++i){
@@ -57,7 +71,17 @@ void Draw(){
                 cout << "F";
             }
             else{
-                cout << ".";
+                //tutaj dodajemy rysowanie ogona
+                // Rysowanie ogona
+                bool print = false;
+                for (size_t k = 0; k < tailSize; ++k) {
+                    if (tailX[k] == j && tailY[k] == i) {
+                        cout << "o"; // Kawałek ogona
+                        print = true;
+                    }
+                }
+                if (!print)
+                    cout << " "; // Puste pole
             }
         }
         cout << "#" << endl;
@@ -67,6 +91,8 @@ void Draw(){
     for(size_t i = 0; i < widthP + 2; ++i){
         cout << "#";
     }
+
+    std::cout << endl <<"WYNIK: " << score << endl;
     
 }
 
@@ -95,6 +121,36 @@ void Input(){
 
 //oblsuga ruchu glowy weza
 void Logic(){
+    //TAIL
+
+    //taikX[0] to jest pozycja glowy weza
+
+    //ustawienie glowy weza jako starej wartosci
+    int prevX = tailX[0];
+    int prevY = tailY[0];
+    
+    //bufor
+    int prev2X, prev2Y;
+
+    //ustawienie nowej pozycji glowy weza
+    tailX[0] = x;
+    tailY[0] = y;
+
+    for(size_t i = 1; i < tailSize; ++i){
+        //buforowanie weza za glowa
+        prev2X = tailX[i];
+        prev2Y = tailY[i];
+
+        //aktualizacja nowej pozycji weza
+        tailX[i] = prevX;
+        tailY[i] = prevY;
+
+        //przywrocenie buforu
+        prevX = prev2X;
+        prevY = prev2Y;
+    }
+
+    //zmiana pozycji weża
     switch (dir)
     {
     case LEFT:
@@ -113,16 +169,19 @@ void Logic(){
         break;
     }
 
-    //sprawdzanie czy glowa weza wyszlo poza sciane
+    //sprawdzanie czy glowa weza wyszlo poza sciane 
+    //KOLIZJA
     if(x < 0 || x >= widthP || y < 0 || y >= heightP){
         gameOver = true;
     }
 
     //sprawdzenie ze glowa weza jest na rowno z jedzniem
+    //JEDZENIE
     if(x == fruitX && y == fruitY){
         score += 1;
         fruitX = rand() % widthP;
         fruitY = rand() % heightP;
+        tailSize += 1;
     }
 }
 
